@@ -9,6 +9,8 @@
     let match_case:       boolean = false;
     let match_whole_word: boolean = false;
     let use_regexp:       boolean = false;
+    let table_element:    any;
+    let table_width:      number;
 
     $: maybe_wrap_with_b = function(source: string): string {
         return match_whole_word ? `\\b${source}\\b` : source;
@@ -37,6 +39,8 @@
             `regexp = ${regexp}`,
             `valid_regexp = ${valid_regexp}`,
         );
+        // Don't let the table become narrower than it was initially
+        table_width = table_element?.offsetWidth;
     }
     $: include_line = function(line: string): boolean {
         return regexp.test(line);
@@ -86,7 +90,7 @@
     Use RegExp
 </label>
 
-<table>
+<table bind:this={table_element} style:min-width="{table_width}px">
     <tbody>
         {#each lines as line}
             {#if include_line(line)}
