@@ -11,13 +11,13 @@
     $: maybe_wrap_with_b = function(regexp: string): string {
         return match_whole_word ? `\\b${regexp}\\b` : regexp;
     }
-    $: escaped_filter_string =
+    $: regexp_source =
         maybe_wrap_with_b(
             use_regexp ?
                 filter_string
                 : escapeRegExp(filter_string)
         );
-    $: regexp = new RegExp(escaped_filter_string, match_case ? undefined : "i");
+    $: regexp = new RegExp(regexp_source, match_case ? undefined : "i");
     $: {
         console.log(
             `filter_string = ${JSON.stringify(filter_string)},`,
