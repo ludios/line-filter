@@ -8,8 +8,8 @@
     let match_whole_word: boolean = false;
     let use_regexp:       boolean = false;
 
-    $: maybe_wrap_with_b = function(regexp: string): string {
-        return match_whole_word ? `\\b${regexp}\\b` : regexp;
+    $: maybe_wrap_with_b = function(source: string): string {
+        return match_whole_word ? `\\b${source}\\b` : source;
     }
     $: regexp_source =
         maybe_wrap_with_b(
