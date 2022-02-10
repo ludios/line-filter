@@ -47,6 +47,27 @@
     $: include_line = function(line: string): boolean {
         return regexp.test(line);
     }
+
+    function input_keydown(ev: KeyboardEvent) {
+        console.log(ev);
+        if (!ev.altKey) {
+            return;
+        }
+        switch (ev.key) {
+            case "r":
+                use_regexp = !use_regexp;
+                ev.preventDefault();
+                break;
+            case "c":
+                match_case = !match_case;
+                ev.preventDefault();
+                break;
+            case "w":
+                match_whole_word = !match_whole_word;
+                ev.preventDefault();
+                break;
+        }
+    }
 </script>
 
 <style>
@@ -78,16 +99,16 @@
     }
 </style>
 
-<input size=38 type="text" placeholder="Filter" bind:value={filter_string} aria-invalid={!valid_regexp} />
-<label>
+<input size=38 type="text" placeholder="Filter" on:keydown={input_keydown} bind:value={filter_string} aria-invalid={!valid_regexp} />
+<label title="Alt+c">
     <input type="checkbox" bind:checked={match_case}>
     Match case
 </label>
-<label>
+<label title="Alt+w">
     <input type="checkbox" bind:checked={match_whole_word}>
     Match whole word
 </label>
-<label>
+<label title="Alt+r">
     <input type="checkbox" bind:checked={use_regexp}>
     Use RegExp
 </label>
