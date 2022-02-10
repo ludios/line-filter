@@ -9,7 +9,7 @@
     let match_case:       boolean = false;
     let match_whole_word: boolean = false;
     let use_regexp:       boolean = false;
-    let table_element:    any;
+    let table_element:    HTMLElement;
     let table_width:      number;
 
     $: maybe_wrap_with_b = function(source: string): string {
