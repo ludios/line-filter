@@ -39,8 +39,10 @@
             `regexp = ${regexp}`,
             `valid_regexp = ${valid_regexp}`,
         );
-        // Don't let the table become narrower than it was initially
-        table_width = table_element?.offsetWidth;
+        if (table_width === undefined) {
+            // Don't let the table become narrower than it was initially
+            table_width = table_element?.clientWidth;
+        }
     }
     $: include_line = function(line: string): boolean {
         return regexp.test(line);
