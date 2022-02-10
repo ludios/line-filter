@@ -1,14 +1,14 @@
-<script>
+<script lang="ts">
     import escapeRegExp from 'lodash.escaperegexp';
 
-    export let lines = [];
+    export let lines:     string[] = [];
 
-    let filter_string = "";
-    let match_case = false;
-    let match_whole_word = false;
-    let use_regexp = false;
+    let filter_string:    string = "";
+    let match_case:       boolean = false;
+    let match_whole_word: boolean = false;
+    let use_regexp:       boolean = false;
 
-    $: maybe_wrap_with_b = function(regexp) {
+    $: maybe_wrap_with_b = function(regexp: string): string {
         return match_whole_word ? `\\b${regexp}\\b` : regexp;
     }
     $: regexp_source =
@@ -25,7 +25,7 @@
             `regexp = ${regexp}`
         );
     }
-    $: include_line = function(line) {
+    $: include_line = function(line: string): boolean {
         return regexp.test(line);
     }
 </script>
