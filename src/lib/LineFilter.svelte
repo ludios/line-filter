@@ -1,15 +1,28 @@
 <script lang="ts">
-    export let lines: string[] = [];
-    let lowercase_lines: string[] = lines.map(line => line.toLowerCase());
+    import escapeRegExp from 'lodash.escaperegexp';
 
-    let filter_string: string = "";
-    let match_case: boolean = false;
+    export let lines:     string[] = [];
 
-    function include_line(line: string) {
-        if (match_case) {
-            return line.includes(filter_string);
-        }
-        return lowercase_lines.include(filter_string.toLowerCase());
+    let filter_string:    string = "";
+    let match_case:       boolean = false;
+    let match_whole_word: boolean = false;
+    let use_regexp:       boolean = false;
+    $: escaped_filter_string =
+        use_regexp ?
+            filter_string
+            : escapeRegExp(filter_string);
+    $: regexp = new RegExp(escaped_filter_string, match_case ? undefined : "i");
+    $: {
+        console.log(
+            `filter_string = ${JSON.stringify(filter_string)},`,
+            `match_case = ${match_case},`,
+            `regexp = ${regexp}`
+        );
+    }
+
+    $: include_line = function(line: string): boolean {
+        //console.log(line, regexp);
+        return regexp.test(line);
     }
 </script>
 
@@ -28,19 +41,35 @@
     input {
         border: 1px solid var(--border-color);
         margin: 4px 0;
+        padding: 4px;
+    }
+    input[type=checkbox] {
+        transform: scale(1.25);
+        margin: 0px 4px 0 4px;
+    }
+    label {
+        user-select: none;
     }
 </style>
 
-<input type="text" placeholder="Filter" bind:value={filter_string} />
+<input size=38 type="text" placeholder="Filter" bind:value={filter_string} />
 <label>
     <input type="checkbox" bind:checked={match_case}>
     Match case
+</label>
+<label>
+    <input type="checkbox" bind:checked={match_whole_word}>
+    Match whole word
+</label>
+<label>
+    <input type="checkbox" bind:checked={use_regexp}>
+    Use RegExp
 </label>
 
 <table>
     <tbody>
         {#each lines as line}
-            {#if line.includes(filter_string)}
+            {#if include_line(line)}
                 <tr>
                     <td class="line">{line}</td>
                 </tr>
