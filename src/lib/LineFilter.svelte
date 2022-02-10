@@ -3,6 +3,8 @@
 
     export let lines:     string[] = [];
 
+    let regexp:           RegExp;
+    let valid_regexp:     boolean;
     let filter_string:    string = "";
     let match_case:       boolean = false;
     let match_whole_word: boolean = false;
@@ -17,12 +19,23 @@
                 filter_string
                 : escapeRegExp(filter_string)
         );
-    $: regexp = new RegExp(regexp_source, match_case ? undefined : "i");
     $: {
+        try {
+            regexp = new RegExp(regexp_source, match_case ? undefined : "i");
+            valid_regexp = true;
+        } catch (e) {
+            if (!(e instanceof SyntaxError)) {
+                throw e;
+            }
+            console.log(`Invalid RegExp: ${regexp_source}, error = ${e}`);
+            regexp = new RegExp(".^"); // don't match anything
+            valid_regexp = false;
+        }
         console.log(
             `filter_string = ${JSON.stringify(filter_string)},`,
             `match_case = ${match_case},`,
-            `regexp = ${regexp}`
+            `regexp = ${regexp}`,
+            `valid_regexp = ${valid_regexp}`,
         );
     }
     $: include_line = function(line: string): boolean {
@@ -47,6 +60,9 @@
         margin: 4px 0;
         padding: 4px;
     }
+    input[aria-invalid="true"] {
+        background-color: darkred;
+    }
     input[type=checkbox] {
         transform: scale(1.25);
         margin: 0px 4px 0 4px;
@@ -56,7 +72,7 @@
     }
 </style>
 
-<input size=38 type="text" placeholder="Filter" bind:value={filter_string} />
+<input size=38 type="text" placeholder="Filter" bind:value={filter_string} aria-invalid={!valid_regexp} />
 <label>
     <input type="checkbox" bind:checked={match_case}>
     Match case
