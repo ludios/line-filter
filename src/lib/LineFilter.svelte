@@ -7,10 +7,16 @@
     let match_case:       boolean = false;
     let match_whole_word: boolean = false;
     let use_regexp:       boolean = false;
+
+    $: maybe_wrap_with_b = function(s: string): string {
+        return match_whole_word ? `\\b${s}\\b` : s;
+    }
     $: escaped_filter_string =
-        use_regexp ?
-            filter_string
-            : escapeRegExp(filter_string);
+        maybe_wrap_with_b(
+            use_regexp ?
+                filter_string
+                : escapeRegExp(filter_string)
+        );
     $: regexp = new RegExp(escaped_filter_string, match_case ? undefined : "i");
     $: {
         console.log(
@@ -19,9 +25,7 @@
             `regexp = ${regexp}`
         );
     }
-
     $: include_line = function(line: string): boolean {
-        //console.log(line, regexp);
         return regexp.test(line);
     }
 </script>
